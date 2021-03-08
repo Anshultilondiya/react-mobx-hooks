@@ -1,25 +1,47 @@
-import logo from './logo.svg';
 import './App.css';
+import React from "react";
+import {useTodoStore} from "./contextProviders/todoContext";
+import {useObserver} from "mobx-react";
+import Home from "./pages/home";
+import AddTodo from "./pages/addtodo";
+import {BrowserRouter, Switch, Route, Link} from "react-router-dom";
+
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const todoStore = useTodoStore();
+
+    return useObserver(()=>{
+       return ( <div className="App">
+               <BrowserRouter>
+               <ul>
+                   <li><Link to='/'>Home</Link></li>
+                   <li><Link to='/add'>Add</Link></li>
+               </ul>
+
+                <Switch>
+                    <Route exact path='/'>
+                        <Home/>
+                    </Route>
+                    <Route path='/add' >
+                        <AddTodo/>
+                    </Route>
+                </Switch>
+            </BrowserRouter>
+            <br/>
+            <ul>
+                {todoStore.todoList.map(el=>{
+                    return(
+                        <li key={el.id}>{el.text}</li>
+                    )
+                })}
+            </ul>
+        </div>
+       )
+    })
+
+
 }
 
 export default App;
